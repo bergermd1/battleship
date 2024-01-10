@@ -70,4 +70,25 @@ describe('Basic gameboard works', () => {
         expect(gameboard.hitCoords.length).toBe(2);
         expect(gameboard.missCoords.length).toBe(0);
     })
+    test('All ships sunk', () => {
+        gameboard.receiveAttack([0,0]);
+        gameboard.receiveAttack([1,0]);
+        gameboard.receiveAttack([2,0]);
+        gameboard.receiveAttack([3,0]);
+        gameboard.receiveAttack([4,0]);
+        gameboard.receiveAttack([0,2]);
+        gameboard.receiveAttack([1,2]);
+        gameboard.receiveAttack([2,2]);
+        gameboard.receiveAttack([3,2]);
+        gameboard.receiveAttack([0,4]);
+        gameboard.receiveAttack([1,4]);
+        gameboard.receiveAttack([2,4]);
+        gameboard.receiveAttack([0,6]);
+        gameboard.receiveAttack([1,6]);
+        gameboard.receiveAttack([2,6]);
+        gameboard.receiveAttack([0,8]);
+        expect(gameboard.allShipsSunk()).toBe(false);
+        gameboard.receiveAttack([1,8]);
+        expect(gameboard.allShipsSunk()).toBe(true);
+    })
 })
