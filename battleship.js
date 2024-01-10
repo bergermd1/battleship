@@ -111,22 +111,56 @@ function Gameboard() {
     }
 }
 
-let g = Gameboard();
-// console.log(g.allShipCoords);
-g.initializeShips({
+function Player(board) {
+    function attack(coords) {
+        let processedCoords = [];
+        processedCoords.push(parseInt(coords[0]));
+        processedCoords.push(parseInt(coords[1]));
+        board.receiveAttack(processedCoords);
+    }
+
+    return {
+        attack,
+    }
+}
+
+let board1 = Gameboard();
+let board2 = Gameboard();
+board1.initializeShips({
     'carrier': [[0,0], [1,0], [2,0], [3,0], [4,0]],
     'battleship': [[0,2], [1,2], [2,2], [3,2]],
     'submarine': [[0,4], [1,4], [2,4]],
     'cruiser': [[0,6], [1,6], [2,6]],
     'destroyer': [[0,8], [1,8]],
 })
-// console.log(g.includesCoords(g.allShipCoords, [0,0]));
-g.displayInConsole();
-g.receiveAttack([0,0])
-g.receiveAttack([1,0])
-g.receiveAttack([2,0])
-g.receiveAttack([8,0])
-g.displayInConsole();
+board2.initializeShips({
+    'carrier': [[5,1], [6,1], [7,1], [8,1], [9,1]],
+    'battleship': [[6,3], [7,3], [8,3], [9,3]],
+    'submarine': [[7,5], [8,5], [9,5]],
+    'cruiser': [[7,7], [8,7], [9,7]],
+    'destroyer': [[8,9], [9,9]],
+})
+
+gameLoop();
+
+function gameLoop() {
+    let p1 = Player(board1);
+    let p2 = Player(board2);
+    console.log('Player 1');
+    board1.displayInConsole();
+    console.log('Player 2');
+    board2.displayInConsole();
+
+    for (let i = 0; i < 10; i ++) {
+        let move1 = prompt("Enter move for player 1");
+        console.log(move1[0]);
+        p1.attack(move1);
+        let move2 = prompt("Enter move for player 2");
+        p2.attack(move2);
+        board1.displayInConsole();
+        board2.displayInConsole();
+    }
+}
 
 module.exports = {
     Ship,
