@@ -63,23 +63,9 @@ function Gameboard() {
         return sunk;
     }
 
-    function includesCoords(arr, coords) {
-        // console.log(arr[0][0] === coords[0] && arr[0][1] === coords[1]);
-        // console.log(arr[0][1] === coords[1]);
-        let includes = false;
-        arr.forEach(element => {
-            // console.log(element);
-            if (element[0] === coords[0] && element[1] === coords[1]) {
-                // console.log('yeah');
-                includes = true;
-            }
-        })
-        return includes;
-    }
-
     // function isValidLocation();
 
-    function displayInConsole() {
+    function displayFullBoard() {
         let str = '';
         for (let i = 0; i < 10; i++) {
             for (let j = 0; j < 10; j++) {
@@ -98,6 +84,23 @@ function Gameboard() {
         console.log(str);
     }
 
+    function displayHitsMisses() {
+        let str = '';
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+                if (includesCoords(this.hitCoords, [j,i])) {
+                    str += 'H';//hit
+                } else if (includesCoords(this.missCoords, [j,i])) {
+                    str += 'M';//miss
+                } else {
+                    str += '-';//water (empty)
+                }
+            }
+            str += '\n';
+        }
+        console.log(str);
+    }
+
     return {
         ships,
         allShipCoords,
@@ -107,21 +110,52 @@ function Gameboard() {
         includesCoords,
         receiveAttack,
         allShipsSunk,
-        displayInConsole,
+        displayFullBoard,
+        displayHitsMisses,
     }
 }
 
-function Player(board) {
+function Player(myBoard, enemyBoard) {
+    this.myBoard = myBoard;
+    this.enemyBoard = enemyBoard;
+
     function attack(coords) {
         let processedCoords = [];
         processedCoords.push(parseInt(coords[0]));
         processedCoords.push(parseInt(coords[1]));
-        board.receiveAttack(processedCoords);
+        this.enemyBoard.receiveAttack(processedCoords);
+    }
+
+    function randomAttack() {
+        // console.log('yeah');
+        let x = Math.floor(Math.random() * 10); 
+        let y = Math.floor(Math.random() * 10); 
+        let coords = [x,y];
+        // console.log(this.enemyBoard.missCoords.concat(this.enemyBoard.hitCoords));
+        while (includesCoords(this.enemyBoard.missCoords.concat(this.enemyBoard.hitCoords), coords)) {
+            x = Math.floor(Math.random() * 10); 
+            y = Math.floor(Math.random() * 10); 
+            coords = [x,y];
+        } 
+        this.enemyBoard.receiveAttack(coords);
     }
 
     return {
+        myBoard,
+        enemyBoard,
         attack,
+        randomAttack,
     }
+}
+
+function includesCoords(arr, coords) {
+    let includes = false;
+    arr.forEach(element => {
+        if (element[0] === coords[0] && element[1] === coords[1]) {
+            includes = true;
+        }
+    })
+    return includes;
 }
 
 let board1 = Gameboard();
@@ -144,22 +178,49 @@ board2.initializeShips({
 gameLoop();
 
 function gameLoop() {
-    let p1 = Player(board1);
-    let p2 = Player(board2);
+    let p1 = Player(board1, board2);
+    let p2 = Player(board2, board1);
     console.log('Player 1');
-    board1.displayInConsole();
+    board1.displayFullBoard();
     console.log('Player 2');
-    board2.displayInConsole();
+    board2.displayFullBoard();
 
-    for (let i = 0; i < 10; i ++) {
-        let move1 = prompt("Enter move for player 1");
-        console.log(move1[0]);
-        p1.attack(move1);
-        let move2 = prompt("Enter move for player 2");
-        p2.attack(move2);
-        board1.displayInConsole();
-        board2.displayInConsole();
-    }
+    setInterval(() => {
+        p1.randomAttack();
+        if (p1.enemyBoard.allShipsSunk()) {
+            return;
+        }
+        // let move2 = prompt("Enter move for player 2");
+        p2.randomAttack();
+        if (p2.enemyBoard.allShipsSunk()) {
+            return;
+        }
+        console.log('Player 1');
+        p1.myBoard.displayFullBoard();
+        p1.enemyBoard.displayHitsMisses();
+        console.log('Player 2');
+        p2.myBoard.displayFullBoard();
+        p2.enemyBoard.displayHitsMisses();
+    }, 500);
+
+    // for (let i = 0; i < 100; i ++) {
+    //     // let move1 = prompt("Enter move for player 1");
+    //     p1.randomAttack();
+    //     if (p1.enemyBoard.allShipsSunk()) {
+    //         break;
+    //     }
+    //     // let move2 = prompt("Enter move for player 2");
+    //     p2.randomAttack();
+    //     if (p2.enemyBoard.allShipsSunk()) {
+    //         break;
+    //     }
+    //     console.log('Player 1');
+    //     p1.myBoard.displayFullBoard();
+    //     p1.enemyBoard.displayHitsMisses();
+    //     console.log('Player 2');
+    //     p2.myBoard.displayFullBoard();
+    //     p2.enemyBoard.displayHitsMisses();
+    // }
 }
 
 module.exports = {
