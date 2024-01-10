@@ -185,23 +185,23 @@ function gameLoop() {
     console.log('Player 2');
     board2.displayFullBoard();
 
-    setInterval(() => {
-        p1.randomAttack();
-        if (p1.enemyBoard.allShipsSunk()) {
-            return;
-        }
-        // let move2 = prompt("Enter move for player 2");
-        p2.randomAttack();
-        if (p2.enemyBoard.allShipsSunk()) {
-            return;
-        }
-        console.log('Player 1');
-        p1.myBoard.displayFullBoard();
-        p1.enemyBoard.displayHitsMisses();
-        console.log('Player 2');
-        p2.myBoard.displayFullBoard();
-        p2.enemyBoard.displayHitsMisses();
-    }, 500);
+    // setInterval(() => {
+    //     p1.randomAttack();
+    //     if (p1.enemyBoard.allShipsSunk()) {
+    //         return;
+    //     }
+    //     // let move2 = prompt("Enter move for player 2");
+    //     p2.randomAttack();
+    //     if (p2.enemyBoard.allShipsSunk()) {
+    //         return;
+    //     }
+    //     console.log('Player 1');
+    //     p1.myBoard.displayFullBoard();
+    //     p1.enemyBoard.displayHitsMisses();
+    //     console.log('Player 2');
+    //     p2.myBoard.displayFullBoard();
+    //     p2.enemyBoard.displayHitsMisses();
+    // }, 500);
 
     // for (let i = 0; i < 100; i ++) {
     //     // let move1 = prompt("Enter move for player 1");
