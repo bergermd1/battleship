@@ -1,3 +1,6 @@
+// const imports = require('./index');
+// import {colorShipSquares} from "./index.js";
+
 function Ship(coords) {
     this.coords = coords;
     const length = coords.length;
@@ -175,7 +178,7 @@ board2.initializeShips({
     'destroyer': [[8,9], [9,9]],
 })
 
-gameLoop();
+// gameLoop();
 
 function gameLoop() {
     let p1 = Player(board1, board2);
@@ -184,6 +187,7 @@ function gameLoop() {
     board1.displayFullBoard();
     console.log('Player 2');
     board2.displayFullBoard();
+    colorShipSquares(board1.allShipCoords);
 
     // setInterval(() => {
     //     p1.randomAttack();
@@ -221,6 +225,13 @@ function gameLoop() {
     //     p2.myBoard.displayFullBoard();
     //     p2.enemyBoard.displayHitsMisses();
     // }
+}
+
+function colorShipSquares(coords) {
+    coords.forEach(coord => {
+        console.log(document.querySelector(`.gridSquare`));
+        document.querySelector(`#gameBoardP1-${coord[0]}${coord[1]}`).classList.add('unhitShipSquare');
+    });
 }
 
 module.exports = {

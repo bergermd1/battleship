@@ -6,25 +6,25 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
     <script src="battleship.js"></script>
+    <script src="index.js"></script>
 </head>
 <body>
     <div class="screenContainer">
         <div class="playerScreen">
-            <div class="hitMiss">
-                
-            </div>
-            <div class="gameBoard">
-
-            </div>
         </div>
         <div class="computerScreen">
-            <div class="hitMiss">
+            <div class="hitMiss grid">
 
             </div>
-            <div class="gameBoard">
+            <div class="gameBoard grid">
 
             </div>
         </div>
     </div>
+    <script>
+        initializeHTML();
+        gameLoop();
+        // colorShipSquares([[0,0], [0,1], [0,2]]);
+    </script>
 </body>
 </html>

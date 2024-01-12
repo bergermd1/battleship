@@ -27,13 +27,32 @@
     align-items: center;
 }
 
-.hitMiss {
+.grid {
     height: 400px;
     width: 400px;
+    display: grid;
+    grid-template-rows: repeat(10, 1fr);
     background-color: aqua;
 }
+
+/* .hitMiss {
+}
+
 .gameBoard {
     height: 400px;
     width: 400px;
-    background-color:bisque;
+    background-color:aqua;
+} */
+
+.gridRow {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+}
+
+.gridSquare {
+    border: solid thin black;
+}
+
+.unhitShipSquare {
+    background-color: rgb(57, 255, 47);
 }
