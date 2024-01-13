@@ -18,6 +18,8 @@ function initializeHTML(p1, p2) {
             hitMissGridSquare.id = `hitMissP1-${i}${j}`;
             hitMissGridSquare.addEventListener('click', () => {
                 p1.attack([i,j]);
+                // p1.myBoard.disableBoard();
+                // p1.enemyBoard.enableBoard();
             });
             hitMissRow.appendChild(hitMissGridSquare);
             

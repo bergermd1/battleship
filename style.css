@@ -53,6 +53,10 @@
     border: solid thin black;
 }
 
+/* .shipSquare {
+    outline: solid thick;
+} */
+
 .unhitShipSquare {
     background-color: rgb(57, 255, 47);
 }

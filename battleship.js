@@ -68,6 +68,10 @@ function Gameboard(boardNumber) {
         return sunk;
     }
 
+    // function disableBoard() {
+
+    // }
+
     // function isValidLocation();
 
     function displayFullBoard() {
@@ -121,20 +125,28 @@ function Gameboard(boardNumber) {
     }
 }
 
-function Player(myBoard, enemyBoard) {
+function Player(myBoard, enemyBoard, myOpponent, myTurn) {
     this.myBoard = myBoard;
+    this.myOpponent = myOpponent;
     this.enemyBoard = enemyBoard;
+    this.myTurn = myTurn;
 
     function attack(coords) {
-        let processedCoords = [];
-        processedCoords.push(parseInt(coords[0]));
-        processedCoords.push(parseInt(coords[1]));
-        if (this.enemyBoard.receiveAttack(processedCoords)) {
-            console.log('yeah');
-            repaintSquareHit(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
-            // repaintSquareHit(this.enemyBoard.boardNumber, processedCoords);
-        } else {
-            repaintSquareMiss(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
+        console.log(this.myTurn);
+        if (this.myTurn) {
+            let processedCoords = [];
+            processedCoords.push(parseInt(coords[0]));
+            processedCoords.push(parseInt(coords[1]));
+            if (this.enemyBoard.receiveAttack(processedCoords)) {
+                console.log('yeah');
+                repaintSquareHit(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
+                // repaintSquareHit(this.enemyBoard.boardNumber, processedCoords);
+            } else {
+                repaintSquareMiss(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
+            }
+            this.myTurn = false;
+            console.log(this.myOpponent);
+            this.myOpponent.myTurn = true;
         }
     }
 
@@ -154,7 +166,9 @@ function Player(myBoard, enemyBoard) {
 
     return {
         myBoard,
+        myOpponent,
         enemyBoard,
+        myTurn,
         attack,
         randomAttack,
     }
@@ -190,8 +204,10 @@ board2.initializeShips({
 // gameLoop();
 
 function gameLoop() {
-    let p1 = Player(board1, board2);
-    let p2 = Player(board2, board1);
+    let p1 = Player(board1, board2, null, true);
+    let p2 = Player(board2, board1, p1, false);
+    p1.myOpponent = p2;
+    // console.log(p1);
     initializeHTML(p1, p2);
     console.log('Player 1');
     // board1.displayFullBoard();
@@ -217,6 +233,10 @@ function gameLoop() {
     //     p2.myBoard.displayFullBoard();
     //     p2.enemyBoard.displayHitsMisses();
     // }, 500);
+
+    // while (!p1.enemyBoard.allShipsSunk() || !p2.enemyBoard.allShipsSunk()) {
+
+    // }
 
     for (let i = 0; i < 1; i ++) {
         // let move1 = prompt("Enter move for player 1");
@@ -244,6 +264,7 @@ function colorShipSquares(boardNumber, coords) {
     // console.log(this);
     coords.forEach(coord => {
         // console.log(document.querySelector(`.gridSquare`));
+        // document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('shipSquare');
         document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('unhitShipSquare');
     });
 }
