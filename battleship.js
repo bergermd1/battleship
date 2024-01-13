@@ -23,7 +23,8 @@ function Ship(coords) {
     }
 }
 
-function Gameboard() {
+function Gameboard(boardNumber) {
+    this.boardNumber = boardNumber;
     const ships = {};
     let allShipCoords = [];
     let missCoords = [];
@@ -47,11 +48,12 @@ function Gameboard() {
                         ships[ship].hit();
                         hitCoords.push(coords);
                         // allShipsSunk();
-                        return;
+                        return true;
                     }
                 }
             }
             missCoords.push(coords);
+            return false;
         }
     }
 
@@ -105,6 +107,7 @@ function Gameboard() {
     }
 
     return {
+        boardNumber,
         ships,
         allShipCoords,
         missCoords,
@@ -126,7 +129,13 @@ function Player(myBoard, enemyBoard) {
         let processedCoords = [];
         processedCoords.push(parseInt(coords[0]));
         processedCoords.push(parseInt(coords[1]));
-        this.enemyBoard.receiveAttack(processedCoords);
+        if (this.enemyBoard.receiveAttack(processedCoords)) {
+            console.log('yeah');
+            repaintSquareHit(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
+            // repaintSquareHit(this.enemyBoard.boardNumber, processedCoords);
+        } else {
+            repaintSquareMiss(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
+        }
     }
 
     function randomAttack() {
@@ -161,8 +170,8 @@ function includesCoords(arr, coords) {
     return includes;
 }
 
-let board1 = Gameboard();
-let board2 = Gameboard();
+let board1 = Gameboard(1);
+let board2 = Gameboard(2);
 board1.initializeShips({
     'carrier': [[0,0], [1,0], [2,0], [3,0], [4,0]],
     'battleship': [[0,2], [1,2], [2,2], [3,2]],
@@ -183,11 +192,13 @@ board2.initializeShips({
 function gameLoop() {
     let p1 = Player(board1, board2);
     let p2 = Player(board2, board1);
+    initializeHTML(p1, p2);
     console.log('Player 1');
-    board1.displayFullBoard();
+    // board1.displayFullBoard();
     console.log('Player 2');
-    board2.displayFullBoard();
-    colorShipSquares(board1.allShipCoords);
+    // board2.displayFullBoard();
+    colorShipSquares(board1.boardNumber, board1.allShipCoords);
+    colorShipSquares(board2.boardNumber, board2.allShipCoords);
 
     // setInterval(() => {
     //     p1.randomAttack();
@@ -207,32 +218,115 @@ function gameLoop() {
     //     p2.enemyBoard.displayHitsMisses();
     // }, 500);
 
-    // for (let i = 0; i < 100; i ++) {
-    //     // let move1 = prompt("Enter move for player 1");
-    //     p1.randomAttack();
-    //     if (p1.enemyBoard.allShipsSunk()) {
-    //         break;
-    //     }
-    //     // let move2 = prompt("Enter move for player 2");
-    //     p2.randomAttack();
-    //     if (p2.enemyBoard.allShipsSunk()) {
-    //         break;
-    //     }
-    //     console.log('Player 1');
-    //     p1.myBoard.displayFullBoard();
-    //     p1.enemyBoard.displayHitsMisses();
-    //     console.log('Player 2');
-    //     p2.myBoard.displayFullBoard();
-    //     p2.enemyBoard.displayHitsMisses();
-    // }
+    for (let i = 0; i < 1; i ++) {
+        // let move1 = prompt("Enter move for player 1");
+        // p1.attack(move1);
+        // p1.randomAttack();
+        if (p1.enemyBoard.allShipsSunk()) {
+            break;
+        }
+        // let move2 = prompt("Enter move for player 2");
+        // p2.attack(move2);
+        // p2.randomAttack();
+        if (p2.enemyBoard.allShipsSunk()) {
+            break;
+        }
+        console.log('Player 1');
+        // p1.myBoard.displayFullBoard();
+        // p1.enemyBoard.displayHitsMisses();
+        console.log('Player 2');
+        // p2.myBoard.displayFullBoard();
+        // p2.enemyBoard.displayHitsMisses();
+    }
 }
 
-function colorShipSquares(coords) {
+function colorShipSquares(boardNumber, coords) {
+    // console.log(this);
     coords.forEach(coord => {
-        console.log(document.querySelector(`.gridSquare`));
-        document.querySelector(`#gameBoardP1-${coord[0]}${coord[1]}`).classList.add('unhitShipSquare');
+        // console.log(document.querySelector(`.gridSquare`));
+        document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('unhitShipSquare');
     });
 }
+
+function repaintSquareHit(boardNumber, enemyBoardNumber, coord) {
+    // console.log(`#gameboardP${enemyBoardNumber}-${coord[0]}${coord[1]}`);
+    document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).classList.remove('unhitShipSquare');
+    document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('hitShipSquare');
+    document.querySelector(`#gameBoardP${enemyBoardNumber}-${coord[0]}${coord[1]}`).classList.remove('unhitShipSquare');
+    document.querySelector(`#gameBoardP${enemyBoardNumber}-${coord[0]}${coord[1]}`).classList.add('hitShipSquare');
+}
+function repaintSquareMiss(boardNumber, enemyBoardNumber, coord) {
+    // console.log(`#gameboardP${enemyBoardNumber}-${coord[0]}${coord[1]}`);
+    document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).classList.remove('unhitShipSquare');
+    document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('missShipSquare');
+    document.querySelector(`#gameBoardP${enemyBoardNumber}-${coord[0]}${coord[1]}`).classList.remove('unhitShipSquare');
+    document.querySelector(`#gameBoardP${enemyBoardNumber}-${coord[0]}${coord[1]}`).classList.add('missShipSquare');
+}
+
+// function initializeHTML() {
+//     const hitMiss = document.createElement('div');
+//     hitMiss.className = 'hitMiss grid';
+//     const gameBoard = document.createElement('div');
+//     gameBoard.className = 'gameBoard grid';
+//     for (let i = 0; i < 10; i++) {
+//         const hitMissRow = document.createElement('div');
+//         hitMissRow.className = 'gridRow';
+//         hitMiss.appendChild(hitMissRow)
+        
+//         const gameBoardRow = document.createElement('div');
+//         gameBoardRow.className = 'gridRow';
+//         gameBoard.appendChild(gameBoardRow);
+        
+//         for (let j = 0; j < 10; j++) {
+//             const hitMissGridSquare = document.createElement('div');
+//             hitMissGridSquare.className = 'gridSquare';
+//             hitMissGridSquare.id = `hitMissP1-${i}${j}`;
+//             // gridSquare.addEventListener('click', )
+//             hitMissRow.appendChild(hitMissGridSquare);
+            
+//             const gameBoardGridSquare = document.createElement('div');
+//             gameBoardGridSquare.className = 'gridSquare';
+//             gameBoardGridSquare.id = `gameBoardP1-${i}${j}`;
+//             gameBoardRow.appendChild(gameBoardGridSquare);
+//         }
+//     }
+
+//     const hitMiss2 = document.createElement('div');
+//     hitMiss2.className = 'hitMiss grid';
+//     const gameBoard2 = document.createElement('div');
+//     gameBoard2.className = 'gameBoard grid';
+//     for (let i = 0; i < 10; i++) {
+//         const hitMissRow = document.createElement('div');
+//         hitMissRow.className = 'gridRow';
+//         hitMiss2.appendChild(hitMissRow)
+        
+//         const gameBoardRow = document.createElement('div');
+//         gameBoardRow.className = 'gridRow';
+//         gameBoard2.appendChild(gameBoardRow);
+        
+//         for (let j = 0; j < 10; j++) {
+//             const hitMissGridSquare = document.createElement('div');
+//             hitMissGridSquare.className = 'gridSquare';
+//             hitMissGridSquare.id = `hitMissP2-${i}${j}`;
+//             gridSquare.addEventListener('click', () => {
+                
+//             })
+//             hitMissRow.appendChild(hitMissGridSquare);
+            
+//             const gameBoardGridSquare = document.createElement('div');
+//             gameBoardGridSquare.className = 'gridSquare';
+//             gameBoardGridSquare.id = `gameBoardP2-${i}${j}`;
+//             gameBoardRow.appendChild(gameBoardGridSquare);
+//         }
+//     }
+
+//     // console.log(document.querySelector('.playerScreen'));
+//     document.querySelector('.playerScreen').appendChild(hitMiss);
+//     document.querySelector('.playerScreen').appendChild(gameBoard);
+//     document.querySelector('.computerScreen').appendChild(hitMiss2);
+//     document.querySelector('.computerScreen').appendChild(gameBoard2);
+//     // return hitMiss;
+// }
 
 module.exports = {
     Ship,
