@@ -132,15 +132,13 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn) {
     this.myTurn = myTurn;
 
     function attack(coords) {
-        console.log(this.myTurn);
-        if (this.myTurn) {
+        if (this.myTurn && !includesCoords(this.enemyBoard.missCoords.concat(this.enemyBoard.hitCoords), coords)) {
             let processedCoords = [];
             processedCoords.push(parseInt(coords[0]));
             processedCoords.push(parseInt(coords[1]));
             if (this.enemyBoard.receiveAttack(processedCoords)) {
                 console.log('yeah');
                 repaintSquareHit(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
-                // repaintSquareHit(this.enemyBoard.boardNumber, processedCoords);
             } else {
                 repaintSquareMiss(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
             }
@@ -151,11 +149,9 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn) {
     }
 
     function randomAttack() {
-        // console.log('yeah');
         let x = Math.floor(Math.random() * 10); 
         let y = Math.floor(Math.random() * 10); 
         let coords = [x,y];
-        // console.log(this.enemyBoard.missCoords.concat(this.enemyBoard.hitCoords));
         while (includesCoords(this.enemyBoard.missCoords.concat(this.enemyBoard.hitCoords), coords)) {
             x = Math.floor(Math.random() * 10); 
             y = Math.floor(Math.random() * 10); 
