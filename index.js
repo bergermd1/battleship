@@ -15,9 +15,9 @@ function initializeHTML(p1, p2) {
         for (let j = 0; j < 10; j++) {
             const hitMissGridSquare = document.createElement('div');
             hitMissGridSquare.className = 'gridSquare';
-            hitMissGridSquare.id = `hitMissP1-${i}${j}`;
+            hitMissGridSquare.id = `hitMissP1-${j}${i}`;
             hitMissGridSquare.addEventListener('click', () => {
-                p1.attack([i,j]);
+                p1.attack([j,i]);
                 // p1.myBoard.disableBoard();
                 // p1.enemyBoard.enableBoard();
             });
@@ -25,7 +25,7 @@ function initializeHTML(p1, p2) {
             
             const gameBoardGridSquare = document.createElement('div');
             gameBoardGridSquare.className = 'gridSquare';
-            gameBoardGridSquare.id = `gameBoardP1-${i}${j}`;
+            gameBoardGridSquare.id = `gameBoardP1-${j}${i}`;
             gameBoardRow.appendChild(gameBoardGridSquare);
         }
     }
@@ -46,15 +46,15 @@ function initializeHTML(p1, p2) {
         for (let j = 0; j < 10; j++) {
             const hitMissGridSquare = document.createElement('div');
             hitMissGridSquare.className = 'gridSquare';
-            hitMissGridSquare.id = `hitMissP2-${i}${j}`;
+            hitMissGridSquare.id = `hitMissP2-${j}${i}`;
             hitMissGridSquare.addEventListener('click', () => {
-                p2.attack([i,j]);
+                p2.attack([j,i]);
             });
             hitMissRow.appendChild(hitMissGridSquare);
             
             const gameBoardGridSquare = document.createElement('div');
             gameBoardGridSquare.className = 'gridSquare';
-            gameBoardGridSquare.id = `gameBoardP2-${i}${j}`;
+            gameBoardGridSquare.id = `gameBoardP2-${j}${i}`;
             gameBoardRow.appendChild(gameBoardGridSquare);
         }
     }

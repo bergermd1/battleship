@@ -28,6 +28,7 @@
 }
 
 .grid {
+    border: thick solid;
     height: 400px;
     width: 400px;
     display: grid;
