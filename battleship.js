@@ -1,6 +1,3 @@
-// const imports = require('./index');
-// import {colorShipSquares} from "./index.js";
-
 function Ship(coords) {
     this.coords = coords;
     const length = coords.length;
@@ -44,12 +41,8 @@ function Gameboard(boardNumber) {
     }
 
     function getAllRandomShipCoords() {
-        // console.log(this);
-        // let direction = getRandomDirection();
         const allShipCoords = [];
         const allShipCoordArr = [];
-        // let carrierCoords = [];
-        // carrierCoords.push(getRandomCoords());
         let shipLengths = [5,4,3,3,2];
         shipLengths.forEach(length => {
             let direction = getRandomDirection();
@@ -87,8 +80,6 @@ function Gameboard(boardNumber) {
     }
 
     function validPosition(allShipCoordsArr, coords) {
-        // console.log(this.missCoords);
-        // console.log(allShipCoordsArr);
         return (coords[0] >= 0 && coords[0] < 10 && coords[1] >= 0 && coords[1] < 10) && 
                 !includesCoords(this.missCoords.concat(this.hitCoords.concat(this.allShipCoords.concat(allShipCoordsArr))), coords)
     }
@@ -121,12 +112,6 @@ function Gameboard(boardNumber) {
         }
         return sunk;
     }
-
-    // function disableBoard() {
-
-    // }
-
-    // function isValidLocation();
 
     function displayFullBoard() {
         let str = '';
@@ -181,16 +166,14 @@ function Gameboard(boardNumber) {
     }
 }
 
-// const b = Gameboard(0);
-// console.log(b.allShipCoords);
-// console.log(b.getAllRandomShipCoords());
-
 function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
     this.myBoard = myBoard;
     this.myOpponent = myOpponent;
     this.enemyBoard = enemyBoard;
     this.myTurn = myTurn;
     this.isHuman = isHuman;
+    this.shipsPlaced = 0;
+    this.shipLengths = [5,4,3,3,2];
 
     function attack(coords) {
         if (this.myTurn && !includesCoords(this.enemyBoard.missCoords.concat(this.enemyBoard.hitCoords), coords)) {
@@ -203,9 +186,7 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
             } else {
                 repaintSquareMiss(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
             }
-            // console.log(this.myOpponent);
             turnOver.bind(this)();
-            // return Promise.resolve();
         }
     }
     
@@ -222,19 +203,9 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
         }
     }
 
-    // function checkGameOver() {
-
-    // }
-
     function randomAttack() {
-        console.log(this);
-        // let x = Math.floor(Math.random() * 10); 
-        // let y = Math.floor(Math.random() * 10); 
         let coords = getRandomCoords();
         while (includesCoords(this.enemyBoard.missCoords.concat(this.enemyBoard.hitCoords), coords)) {
-            // x = Math.floor(Math.random() * 10); 
-            // y = Math.floor(Math.random() * 10); 
-            // coords = [x,y];
             coords = getRandomCoords();
         }
         console.log(coords);
@@ -246,6 +217,43 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
         turnOver.bind(this)();
     }
 
+    function shipOn(coords) {
+        if (shipsPlaced < shipLengths.length) {
+            let direction = 0;
+            let shipLength = shipLengths[shipsPlaced];
+            let shipCoords = [];
+            for (let i = 0; i < shipLength; i++) {
+                shipCoords.push([coords[0] + (i * (direction === 0)), coords[1] + (i * (direction === 1))]);
+            }
+            repaintShipOn(this.myBoard.boardNumber, shipCoords);
+        }
+    }
+    function shipOff(coords) {
+        if (shipsPlaced < shipLengths.length) {
+            let direction = 0;
+            let shipLength = shipLengths[shipsPlaced];
+            let shipCoords = [];
+            for (let i = 0; i < shipLength; i++) {
+                shipCoords.push([coords[0] + (i * (direction === 0)), coords[1] + (i * (direction === 1))]);
+            }
+            repaintShipOff(this.myBoard.boardNumber, shipCoords);
+        }
+    }
+
+    function placeShip(coords) {
+        if (shipsPlaced < shipLengths.length) {
+            let direction = 0;
+            let shipLength = shipLengths[shipsPlaced];
+            let shipCoords = [];
+            for (let i = 0; i < shipLength; i++) {
+                shipCoords.push([coords[0] + (i * (direction === 0)), coords[1] + (i * (direction === 1))]);
+            }
+            // repaintShipOff(this.myBoard.boardNumber, shipCoords);
+            colorShipSquares(this.myBoard.boardNumber, shipCoords);
+            // removeBorders(this.myBoard.boardNumber, {'s': shipCoords})
+        }
+    }
+
     return {
         myBoard,
         myOpponent,
@@ -254,6 +262,9 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
         isHuman,
         attack,
         randomAttack,
+        shipOn,
+        shipOff,
+        placeShip,
     }
 }
 
@@ -271,7 +282,6 @@ function gameLoop() {
     let board1 = Gameboard(1);
     let board2 = Gameboard(2);
     let coords1 = board1.getUserShipCoords();
-    // let coords1 = board1.getAllRandomShipCoords();
     let coords2 = board2.getAllRandomShipCoords();
 
     board1.initializeShips(coords1)
@@ -304,10 +314,9 @@ function colorShipSquares(boardNumber, coords) {
     });
 }
 function removeBorders(boardNumber, ships) {
-    // console.log(ships);
     for (const shipKey in ships) {
         let ship = ships[shipKey].coords;
-        console.log(ship);
+        // console.log(ship);
         let direction = ship[1][0] - ship[0][0];
         for (let i = 0; i < ship.length; i++) {
             if (direction === 1) {
@@ -326,9 +335,6 @@ function removeBorders(boardNumber, ships) {
                 }
             }
         }
-        // ships[ship].forEach(coord => {
-
-        // })
     }
     coords.forEach(coord => {
         document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('unhitShipSquare');
@@ -338,9 +344,6 @@ function removeBorders(boardNumber, ships) {
 function repaintSquareHit(boardNumber, enemyBoardNumber, coord) {
     document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).classList.remove('unhitShipSquare');
     document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('hitShipSquare');
-    // document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).style.backgroundColor = 'red';
-    // document.querySelector(`#gameBoardP${enemyBoardNumber}-${coord[0]}${coord[1]}`).classList.remove('unhitShipSquare');
-    // document.querySelector(`#gameBoardP${enemyBoardNumber}-${coord[0]}${coord[1]}`).classList.add('hitShipSquare');
     document.querySelector(`#gameBoardP${enemyBoardNumber}-${coord[0]}${coord[1]}`).style.backgroundColor = 'red';
 }
 function repaintSquareMiss(boardNumber, enemyBoardNumber, coord) {
@@ -348,6 +351,18 @@ function repaintSquareMiss(boardNumber, enemyBoardNumber, coord) {
     document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('missShipSquare');
     document.querySelector(`#gameBoardP${enemyBoardNumber}-${coord[0]}${coord[1]}`).classList.remove('unhitShipSquare');
     document.querySelector(`#gameBoardP${enemyBoardNumber}-${coord[0]}${coord[1]}`).classList.add('missShipSquare');
+}
+function repaintShipOn(boardNumber, coords) {
+    coords.forEach(coord => {
+        document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('placeShipSquare');
+        // document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).style.backgroundColor = 'gray';
+        // document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).style.opacity = .3;
+    })
+}
+function repaintShipOff(boardNumber, coords) {
+    coords.forEach(coord => {
+        document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.remove('placeShipSquare');
+    })
 }
 
 module.exports = {

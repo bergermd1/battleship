@@ -70,3 +70,7 @@
 .missShipSquare {
     background-color: yellow;
 }
+.placeShipSquare {
+    background-color: gray;
+    opacity: .3;
+}

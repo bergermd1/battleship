@@ -18,8 +18,6 @@ function initializeHTML(p1, p2) {
             hitMissGridSquare.id = `hitMissP1-${j}${i}`;
             hitMissGridSquare.addEventListener('click', () => {
                 p1.attack([j,i]);
-                // p1.myBoard.disableBoard();
-                // p1.enemyBoard.enableBoard();
             });
             hitMissRow.appendChild(hitMissGridSquare);
             
@@ -27,6 +25,15 @@ function initializeHTML(p1, p2) {
             gameBoardGridSquare.className = 'gridSquare';
             gameBoardGridSquare.id = `gameBoardP1-${j}${i}`;
             gameBoardRow.appendChild(gameBoardGridSquare);
+            gameBoardGridSquare.addEventListener('mouseover', () => {
+                p1.shipOn([j,i]);
+            });
+            gameBoardGridSquare.addEventListener('mouseout', () => {
+                p1.shipOff([j,i]);
+            });
+            gameBoardGridSquare.addEventListener('click', () => {
+                p1.placeShip([j,i]);
+            });
         }
     }
 
