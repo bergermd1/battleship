@@ -60,6 +60,9 @@
 
 .unhitShipSquare {
     background-color: rgb(57, 255, 47);
+    border: solid 3px;
+    /* border-left: none; */
+    /* border-right: none; */
 }
 .hitShipSquare {
     background-color: red;
