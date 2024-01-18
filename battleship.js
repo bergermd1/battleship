@@ -26,6 +26,7 @@ function Gameboard(boardNumber) {
     let allShipCoords = [];
     let missCoords = [];
     let hitCoords = [];
+    let shipNames = ['carrier', 'battleship', 'submarine', 'cruiser', 'destroyer'];
     this.shipPlacementDirection = 1;
 
     function addShip(name, coords) {
@@ -161,6 +162,7 @@ function Gameboard(boardNumber) {
         allShipCoords,
         missCoords,
         hitCoords,
+        shipNames,
         shipPlacementDirection,
         addShip,
         initializeShips,
@@ -225,9 +227,10 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
     }
 
     function paintShips(coords, paintFunction) {
-        if (shipsPlaced < shipLengths.length) {
+        // console.log(this);
+        if (this.shipsPlaced < this.shipLengths.length) {
             let direction = this.myBoard.shipPlacementDirection;
-            let shipLength = shipLengths[shipsPlaced];
+            let shipLength = this.shipLengths[this.shipsPlaced];
             let shipCoords = [];
             for (let i = 0; i < shipLength; i++) {
                 let nextCoord = [coords[0] + (i * (direction === 0)),
@@ -261,10 +264,8 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
                     // }
                     // })
             if (valid) {
-                // console.log(this.myBoard.boardNumber);
-                // console.log(shipCoords);
                 paintFunction(this.myBoard.boardNumber, shipCoords);
-                // alert('yeah')
+                // this.shipsPlaced += 1;
                 return shipCoords;
             }
             // for (let i = 0; i < shipLength; i++) {
@@ -328,6 +329,8 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
         enemyBoard,
         myTurn,
         isHuman,
+        shipLengths,
+        shipsPlaced,
         attack,
         randomAttack,
         paintShips,

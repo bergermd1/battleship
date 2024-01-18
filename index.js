@@ -37,8 +37,10 @@ function initializeHTML(p1, p2) {
                 let coords = p1.paintShips([j,i], colorShipSquares);
                 if (coords) {
                     // alert(coords);
-                    console.log(coords);
-                    p1.myBoard.addShip('carrier', coords);
+                    p1.shipsPlaced += 1;
+                    console.log(p1.shipsPlaced);
+                    p1.myBoard.addShip(p1.myBoard.shipNames[p1.shipsPlaced], coords);
+                    removeBorders(p1.myBoard.boardNumber, p1.myBoard.ships);
                     // p1.myBoard.addShip.bind(p1.myBoard)('carrier', coords);
                 }
                 // p1.placeShip([j,i]);
