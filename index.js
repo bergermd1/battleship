@@ -26,16 +26,38 @@ function initializeHTML(p1, p2) {
             gameBoardGridSquare.id = `gameBoardP1-${j}${i}`;
             gameBoardRow.appendChild(gameBoardGridSquare);
             gameBoardGridSquare.addEventListener('mouseover', () => {
-                p1.shipOn([j,i]);
+                p1.paintShips([j,i], repaintShipOn);
+                // p1.painshipOn([j,i]);
             });
             gameBoardGridSquare.addEventListener('mouseout', () => {
-                p1.shipOff([j,i]);
+                p1.paintShips([j,i], repaintShipOff);
+                // p1.shipOff([j,i]);
             });
             gameBoardGridSquare.addEventListener('click', () => {
-                p1.placeShip([j,i]);
+                let coords = p1.paintShips([j,i], colorShipSquares);
+                if (coords) {
+                    // alert(coords);
+                    console.log(coords);
+                    p1.myBoard.addShip('carrier', coords);
+                    // p1.myBoard.addShip.bind(p1.myBoard)('carrier', coords);
+                }
+                // p1.placeShip([j,i]);
             });
         }
+
     }
+    const flipDirectionButtonDiv = document.createElement('div');
+    flipDirectionButtonDiv.className = 'flipDirectionButtonDiv';
+
+    const flipDirectionButton = document.createElement('button');
+    flipDirectionButton.type = 'button';
+    flipDirectionButton.innerText = 'Flip Ship Direction';
+    flipDirectionButton.addEventListener('click', () => {
+        p1.flipShipPlacementDirection();
+    })
+    
+    flipDirectionButtonDiv.appendChild(flipDirectionButton);
+    gameBoard.appendChild(flipDirectionButtonDiv);
 
     const hitMiss2 = document.createElement('div');
     hitMiss2.className = 'hitMiss grid';

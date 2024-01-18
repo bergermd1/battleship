@@ -26,6 +26,13 @@ function Gameboard(boardNumber) {
     let allShipCoords = [];
     let missCoords = [];
     let hitCoords = [];
+    this.shipPlacementDirection = 1;
+
+    function addShip(name, coords) {
+        ships[name] = Ship(coords);
+        allShipCoords.push(coords);
+        // allShipCoords.push(coords);
+    }
 
     function initializeShips(shipsCoords) {
         for (const ship in shipsCoords) {
@@ -105,7 +112,6 @@ function Gameboard(boardNumber) {
     function allShipsSunk() {
         let sunk = true;
         for (const ship in ships) {
-            // console.log(ship);
             if (!ships[ship].isSunk()) {
                 sunk = false;
             }
@@ -155,8 +161,11 @@ function Gameboard(boardNumber) {
         allShipCoords,
         missCoords,
         hitCoords,
+        shipPlacementDirection,
+        addShip,
         initializeShips,
         includesCoords,
+        validPosition,
         receiveAttack,
         allShipsSunk,
         displayFullBoard,
@@ -181,7 +190,6 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
             processedCoords.push(parseInt(coords[0]));
             processedCoords.push(parseInt(coords[1]));
             if (this.enemyBoard.receiveAttack(processedCoords)) {
-                console.log('yeah');
                 repaintSquareHit(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
             } else {
                 repaintSquareMiss(this.myBoard.boardNumber, this.enemyBoard.boardNumber, processedCoords);
@@ -208,7 +216,6 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
         while (includesCoords(this.enemyBoard.missCoords.concat(this.enemyBoard.hitCoords), coords)) {
             coords = getRandomCoords();
         }
-        console.log(coords);
         if (this.enemyBoard.receiveAttack(coords)) {
             repaintSquareHit(this.myBoard.boardNumber, this.enemyBoard.boardNumber, coords);
         } else {
@@ -217,41 +224,102 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
         turnOver.bind(this)();
     }
 
-    function shipOn(coords) {
+    function paintShips(coords, paintFunction) {
         if (shipsPlaced < shipLengths.length) {
-            let direction = 0;
+            let direction = this.myBoard.shipPlacementDirection;
             let shipLength = shipLengths[shipsPlaced];
             let shipCoords = [];
             for (let i = 0; i < shipLength; i++) {
-                shipCoords.push([coords[0] + (i * (direction === 0)), coords[1] + (i * (direction === 1))]);
+                let nextCoord = [coords[0] + (i * (direction === 0)),
+                                 coords[1] + (i * (direction === 1))];
+                shipCoords.push(nextCoord);
             }
-            repaintShipOn(this.myBoard.boardNumber, shipCoords);
+            // let valid = true;
+            // alert(this.myBoard.allShipCoords);
+            let valid = true;
+            // console.log(this.myBoard);
+            shipCoords.forEach(coord => {
+                // console.log(this.myBoard.allShipCoords);
+                if (coord[0] >= 10 || coord[1] >= 10) {
+                    valid = false;
+                }
+                this.myBoard.allShipCoords.forEach(shipCoords => {
+                    if (includesCoords(shipCoords, coord)) {
+                        // alert('yeah');
+                        valid = false;
+                    }
+                })
+                // if (includesCoords(this.myBoard.allShipCoords, coord) || coord[0] >= 10 || coord[1] >= 10 ) {
+                //     alert('yeah');
+                //     valid = false;
+                // }
+            })
+            // let valid = !includesCoords(this.myBoard.allShipCoords, shipCoords);
+            // shipCoords.forEach(coord => {
+                // if (!this.myBoard.validPosition(this.myBoard.allShipCoords, coord)) {
+                    // valid = false;
+                    // }
+                    // })
+            if (valid) {
+                // console.log(this.myBoard.boardNumber);
+                // console.log(shipCoords);
+                paintFunction(this.myBoard.boardNumber, shipCoords);
+                // alert('yeah')
+                return shipCoords;
+            }
+            // for (let i = 0; i < shipLength; i++) {
+                //     let lastCoord = [coords[0] + ((shipLength - 1) * (direction === 0)),
+                //                     coords[1] + ((shipLength - 1) * (direction === 1))];
+                //     let nextCoord = [coords[0] + (i * (direction === 0)),
+                //                      coords[1] + (i * (direction === 1))];
+                //     if (lastCoord[0] < 10 && lastCoord[1] < 10) {
+                    //         shipCoords.push(nextCoord);
+                    //     }
+                    // }
         }
+        // alert('yeah');
+        return false;
     }
-    function shipOff(coords) {
-        if (shipsPlaced < shipLengths.length) {
-            let direction = 0;
-            let shipLength = shipLengths[shipsPlaced];
-            let shipCoords = [];
-            for (let i = 0; i < shipLength; i++) {
-                shipCoords.push([coords[0] + (i * (direction === 0)), coords[1] + (i * (direction === 1))]);
-            }
-            repaintShipOff(this.myBoard.boardNumber, shipCoords);
-        }
-    }
-
-    function placeShip(coords) {
-        if (shipsPlaced < shipLengths.length) {
-            let direction = 0;
-            let shipLength = shipLengths[shipsPlaced];
-            let shipCoords = [];
-            for (let i = 0; i < shipLength; i++) {
-                shipCoords.push([coords[0] + (i * (direction === 0)), coords[1] + (i * (direction === 1))]);
-            }
-            // repaintShipOff(this.myBoard.boardNumber, shipCoords);
-            colorShipSquares(this.myBoard.boardNumber, shipCoords);
-            // removeBorders(this.myBoard.boardNumber, {'s': shipCoords})
-        }
+    // function shipOff(coords) {
+    //     if (shipsPlaced < shipLengths.length) {
+    //         let direction = this.myBoard.shipPlacementDirection;
+    //         let shipLength = shipLengths[shipsPlaced];
+    //         let shipCoords = [];
+    //         for (let i = 0; i < shipLength; i++) {
+    //             let lastCoord = [coords[0] + ((shipLength - 1) * (direction === 0)),
+    //                              coords[1] + ((shipLength - 1) * (direction === 1))];
+    //             let nextCoord = [coords[0] + (i * (direction === 0)),
+    //                             coords[1] + (i * (direction === 1))];
+    //             if (lastCoord[0] < 10 && lastCoord[1] < 10) {
+    //                 shipCoords.push(nextCoord);
+    //             }
+    //         }
+    //         repaintShipOff(this.myBoard.boardNumber, shipCoords);
+    //     }
+    // }
+    
+    // function placeShip(coords) {
+    //     if (shipsPlaced < shipLengths.length) {
+    //         let direction = this.myBoard.shipPlacementDirection;
+    //         let shipLength = shipLengths[shipsPlaced];
+    //         let shipCoords = [];
+    //         for (let i = 0; i < shipLength; i++) {
+    //             let lastCoord = [coords[0] + ((shipLength - 1) * (direction === 0)),
+    //             coords[1] + ((shipLength - 1) * (direction === 1))];
+    //             let nextCoord = [coords[0] + (i * (direction === 0)),
+    //             coords[1] + (i * (direction === 1))];
+    //             if (lastCoord[0] < 10 && lastCoord[1] < 10) {
+    //                 shipCoords.push(nextCoord);
+    //             }
+    //             // shipCoords.push([coords[0] + (i * (direction === 0)), coords[1] + (i * (direction === 1))]);
+    //         }
+    //         colorShipSquares(this.myBoard.boardNumber, shipCoords);
+    //         // removeBorders(this.myBoard.boardNumber, {'s': shipCoords})
+    //     }
+    // }
+    
+    function flipShipPlacementDirection() {
+        this.myBoard.shipPlacementDirection = 1 - this.myBoard.shipPlacementDirection;
     }
 
     return {
@@ -262,9 +330,11 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
         isHuman,
         attack,
         randomAttack,
-        shipOn,
-        shipOff,
-        placeShip,
+        paintShips,
+        // shipOn,
+        // shipOff,
+        // placeShip,
+        flipShipPlacementDirection,
     }
 }
 
@@ -308,39 +378,6 @@ function getRandomDirection() {
     return Math.floor(Math.random() * 2);
 }
 
-function colorShipSquares(boardNumber, coords) {
-    coords.forEach(coord => {
-        document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('unhitShipSquare');
-    });
-}
-function removeBorders(boardNumber, ships) {
-    for (const shipKey in ships) {
-        let ship = ships[shipKey].coords;
-        // console.log(ship);
-        let direction = ship[1][0] - ship[0][0];
-        for (let i = 0; i < ship.length; i++) {
-            if (direction === 1) {
-                if (i !== ship.length - 1) {
-                    document.querySelector(`#gameBoardP${boardNumber}-${ship[i][0]}${ship[i][1]}`).style.borderRight = 'none';
-                }
-                if (i !== 0) {
-                    document.querySelector(`#gameBoardP${boardNumber}-${ship[i][0]}${ship[i][1]}`).style.borderLeft = 'none';
-                }
-            } else {
-                if (i !== ship.length - 1) {
-                    document.querySelector(`#gameBoardP${boardNumber}-${ship[i][0]}${ship[i][1]}`).style.borderBottom = 'none';
-                }
-                if (i !== 0) {
-                    document.querySelector(`#gameBoardP${boardNumber}-${ship[i][0]}${ship[i][1]}`).style.borderTop = 'none';
-                }
-            }
-        }
-    }
-    coords.forEach(coord => {
-        document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('unhitShipSquare');
-    });
-}
-
 function repaintSquareHit(boardNumber, enemyBoardNumber, coord) {
     document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).classList.remove('unhitShipSquare');
     document.querySelector(`#hitMissP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('hitShipSquare');
@@ -363,6 +400,38 @@ function repaintShipOff(boardNumber, coords) {
     coords.forEach(coord => {
         document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.remove('placeShipSquare');
     })
+}
+function colorShipSquares(boardNumber, coords) {
+    coords.forEach(coord => {
+        document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('unhitShipSquare');
+        document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.remove('placeShipSquare');
+    });
+}
+function removeBorders(boardNumber, ships) {
+    for (const shipKey in ships) {
+        let ship = ships[shipKey].coords;
+        let direction = ship[1][0] - ship[0][0];
+        for (let i = 0; i < ship.length; i++) {
+            if (direction === 1) {
+                if (i !== ship.length - 1) {
+                    document.querySelector(`#gameBoardP${boardNumber}-${ship[i][0]}${ship[i][1]}`).style.borderRight = 'none';
+                }
+                if (i !== 0) {
+                    document.querySelector(`#gameBoardP${boardNumber}-${ship[i][0]}${ship[i][1]}`).style.borderLeft = 'none';
+                }
+            } else {
+                if (i !== ship.length - 1) {
+                    document.querySelector(`#gameBoardP${boardNumber}-${ship[i][0]}${ship[i][1]}`).style.borderBottom = 'none';
+                }
+                if (i !== 0) {
+                    document.querySelector(`#gameBoardP${boardNumber}-${ship[i][0]}${ship[i][1]}`).style.borderTop = 'none';
+                }
+            }
+        }
+    }
+    coords.forEach(coord => {
+        document.querySelector(`#gameBoardP${boardNumber}-${coord[0]}${coord[1]}`).classList.add('unhitShipSquare');
+    });
 }
 
 module.exports = {
