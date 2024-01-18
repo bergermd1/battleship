@@ -277,6 +277,8 @@ function Player(myBoard, enemyBoard, myOpponent, myTurn, isHuman) {
                     //         shipCoords.push(nextCoord);
                     //     }
                     // }
+        } else {
+            activateHitMissBoard(this);
         }
         // alert('yeah');
         return false;

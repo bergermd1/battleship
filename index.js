@@ -16,9 +16,9 @@ function initializeHTML(p1, p2) {
             const hitMissGridSquare = document.createElement('div');
             hitMissGridSquare.className = 'gridSquare';
             hitMissGridSquare.id = `hitMissP1-${j}${i}`;
-            hitMissGridSquare.addEventListener('click', () => {
-                p1.attack([j,i]);
-            });
+            // hitMissGridSquare.addEventListener('click', () => {
+            //     p1.attack([j,i]);
+            // });
             hitMissRow.appendChild(hitMissGridSquare);
             
             const gameBoardGridSquare = document.createElement('div');
@@ -38,7 +38,7 @@ function initializeHTML(p1, p2) {
                 if (coords) {
                     // alert(coords);
                     p1.shipsPlaced += 1;
-                    console.log(p1.shipsPlaced);
+                    // console.log(p1.shipsPlaced);
                     p1.myBoard.addShip(p1.myBoard.shipNames[p1.shipsPlaced], coords);
                     removeBorders(p1.myBoard.boardNumber, p1.myBoard.ships);
                     // p1.myBoard.addShip.bind(p1.myBoard)('carrier', coords);
@@ -95,7 +95,18 @@ function initializeHTML(p1, p2) {
     document.querySelector('.playerScreen').appendChild(gameBoard);
     document.querySelector('.computerScreen').appendChild(hitMiss2);
     document.querySelector('.computerScreen').appendChild(gameBoard2);
+    document.querySelector('.computerScreen').style.display = 'none';
     // return hitMiss;
+}
+
+function activateHitMissBoard(p1) {
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+            document.querySelector(`#hitMissP1-${j}${i}`).addEventListener('click', () => {
+                p1.attack([j,i]);
+            })
+        }
+    }
 }
 
 // function colorShipSquares(coords) {
